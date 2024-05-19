@@ -1,9 +1,18 @@
 categories:
-  Pressure
-  Temperature
-  Chemical
-  Radiation
-  Electrical
-  Gravity
-  Mechanical
-  Motion
+  - "Pressure"
+  - "Temperature"
+  - "Chemical"
+  - "Radiation"
+  - "Electrical"
+  - "Gravity"
+  - "Mechanical"
+  - "Motion"
+
+classification:
+  model_config:
+    model_name: "ViT-B-32"
+    model_weights: "laion2b_s34b_b79k"
+description:
+  model_config:
+    model_name: "None"
+    model_weights: "None"
