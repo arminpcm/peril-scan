@@ -1,6 +1,10 @@
 from typing import Any, Dict
 from omegaconf import OmegaConf
-from transformers import LlavaNextProcessor, LlavaNextForConditionalGeneration
+from transformers import (
+    LlavaNextProcessor,
+    LlavaNextForConditionalGeneration,
+    BitsAndBytesConfig,
+)
 import torch
 from lib.inference.model import Model
 
@@ -16,12 +20,19 @@ class LlavaModel(Model):
         self.processor = LlavaNextProcessor.from_pretrained(
             pretrained_model_name_or_path=self.config.model_name
         )
+
+        # specify how to quantize the model
+        quantization_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=torch.float16,
+        )
+
         self.model = LlavaNextForConditionalGeneration.from_pretrained(
             pretrained_model_name_or_path=self.config.model_name,
-            torch_dtype=torch.float16,
-            low_cpu_mem_usage=True,
+            quantization_config=quantization_config,
+            device_map="auto",
         )
-        self.model.to("cuda:0")
 
     def predict(self, x: Dict[str, Any]) -> Dict[str, str]:
         image = x["Image"]

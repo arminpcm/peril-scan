@@ -18,37 +18,46 @@ class Application:
         self.setup_application()
 
     def setup_application(self) -> None:
-        self.classifier = ClipInference(config=self.config.classification)
-        self.describer = LlavaInference(config=self.config.description)
+        if self.model_choice == "Classifier":
+            self.model = ClipInference(config=self.config.classification)
+        elif self.model_choice == "Describer":
+            self.model = LlavaInference(config=self.config.description)
 
     def setup_streamlit(self) -> None:
         st.title(body="Peril Scan")
         self.uploaded_file: Optional[UploadedFile] = st.file_uploader(
-            label="Choose an image...", type="jpg"
+            label="Choose an image...", type=["jpg", "png"]
+        )
+        self.model_choice = st.radio(
+            "Choose a model to use:", ("Classifier", "Describer")
         )
 
     def run(self) -> None:
         if self.uploaded_file is not None:
             image: Image.Image = Image.open(fp=self.uploaded_file)
+            image = image.resize(
+                size=(self.config.image.width, self.config.image.height)
+            )
             st.image(image=image, caption="Uploaded Image.", use_column_width=True)
 
-            # Generate caption
-            caption: str = self.generate_caption(image=image)
-            st.write("OSHA Violation Summary:", caption)
-
-            # Classify image
-            hazard: str = self.classify_image(image=image)
-            st.write("Category:", hazard)
+            if self.model_choice == "Describer":
+                # Generate caption
+                caption: str = self.generate_caption(image=image)
+                st.write("OSHA Violation Summary:", caption)
+            elif self.model_choice == "Classifier":
+                # Classify image
+                hazard: str = self.classify_image(image=image)
+                st.write("Category:", hazard)
 
     def generate_caption(self, image: Image.Image) -> str:
         input_data_dict = {"Image": image, "Prompt": self.config.description.prompt}
-        prediction = self.describer.predict(input_data=input_data_dict)
+        prediction = self.model.predict(input_data=input_data_dict)
         return prediction
 
     def classify_image(self, image: Image.Image) -> str:
         labels: List[str] = [category for category in self.config.categories]
         input_data_dict = {"Image": image, "Labels": labels}
-        prediction = self.classifier.predict(input_data=input_data_dict)
+        prediction = self.model.predict(input_data=input_data_dict)
         index = prediction["class"]
         if index == -1:
             return "Unknown"

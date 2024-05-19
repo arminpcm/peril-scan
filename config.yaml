@@ -8,6 +8,10 @@ categories:
   - "Mechanical"
   - "Motion"
 
+image:
+  width: 600
+  height: 600
+
 classification:
   model_config:
     model_name: "ViT-B-32"
@@ -16,4 +20,4 @@ description:
   model_config:
     model_name: "llava-hf/llava-v1.6-mistral-7b-hf"
   prompt: >-
-    [INST] <image>\nDescribe any OSHA violations in the image in detail and provide references to OSHA rules and objects in the image [/INST]
+    [INST] <image>\nDo you see any OSHA violations in the image? What is the most significant violation that is seen in the image? Provide references to OSHA if you see any violations[/INST]

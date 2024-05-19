@@ -17,3 +17,11 @@ pip3 install -r requirements.txt
 ```bash
 streamlit run app.py
 ```
+
+# Examples
+
+Hazard Classification:
+![Hazard Classification](docs/classification.png)
+
+Hazard Summarization:
+![Hazard Summarization](docs/summarization.png)
