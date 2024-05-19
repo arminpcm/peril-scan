@@ -1,7 +1,8 @@
 categories:
   Pressure
   Temperature
-  Chemical/Radiation
+  Chemical
+  Radiation
   Electrical
   Gravity
   Mechanical
