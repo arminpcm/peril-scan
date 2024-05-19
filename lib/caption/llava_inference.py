@@ -1,26 +1,24 @@
 from typing import Any, Dict
 from omegaconf import OmegaConf
-from lib.classify.clip_model import ClipModel
+from lib.caption.llava_model import LlavaModel
 from lib.inference.inference import Inference
 from lib.inference.model import Model
 
 
-class ClipInference(Inference):
-    """The Clip Inference Class"""
+class LlavaInference(Inference):
+    """The LLaVA Inference Class"""
 
     def __init__(self, config: OmegaConf) -> None:
         super().__init__(config=config)
 
     def setup(self) -> Model:
-        return ClipModel(config=self.config.model_config)
+        return LlavaModel(config=self.config.model_config)
 
     def preprocess(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         return input_data
 
     def postprocess(self, prediction: Dict[str, Any]) -> Dict[str, Any]:
-        probs = self.model.classify(x=prediction)
-        class_idx = self.model.get_most_similar_text_index(probs)
-        return {"class": class_idx, "probabilities": probs}
+        return prediction
 
     def predict(self, input_data: Dict[str, Any]) -> Dict[str, Any]:
         preprocessed_data: Dict[str, Any] = self.preprocess(input_data=input_data)

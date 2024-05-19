@@ -6,6 +6,7 @@ from PIL import Image
 import logging
 
 from lib.classify.clip_inference import ClipInference
+from lib.caption.llava_inference import LlavaInference
 
 
 class Application:
@@ -18,7 +19,7 @@ class Application:
 
     def setup_application(self) -> None:
         self.classifier = ClipInference(config=self.config.classification)
-        self.describer = None
+        self.describer = LlavaInference(config=self.config.description)
 
     def setup_streamlit(self) -> None:
         st.title(body="Peril Scan")
@@ -33,14 +34,16 @@ class Application:
 
             # Generate caption
             caption: str = self.generate_caption(image=image)
-            st.write("Generated Caption:", caption)
+            st.write("OSHA Violation Summary:", caption)
 
             # Classify image
             hazard: str = self.classify_image(image=image)
             st.write("Category:", hazard)
 
     def generate_caption(self, image: Image.Image) -> str:
-        return "Caption"
+        input_data_dict = {"Image": image, "Prompt": self.config.description.prompt}
+        prediction = self.describer.predict(input_data=input_data_dict)
+        return prediction
 
     def classify_image(self, image: Image.Image) -> str:
         labels: List[str] = [category for category in self.config.categories]

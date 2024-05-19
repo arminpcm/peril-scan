@@ -14,5 +14,6 @@ classification:
     model_weights: "laion2b_s34b_b79k"
 description:
   model_config:
-    model_name: "None"
-    model_weights: "None"
+    model_name: "llava-hf/llava-v1.6-mistral-7b-hf"
+  prompt: >-
+    [INST] <image>\nDescribe any OSHA violations in the image in detail and provide references to OSHA rules and objects in the image [/INST]
